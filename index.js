@@ -16,7 +16,8 @@ app.get("/images", (req, res) => {
     .filter(f =>
       f.toLowerCase().endsWith(".png") ||
       f.toLowerCase().endsWith(".jpg") ||
-      f.toLowerCase().endsWith(".jpeg")
+      f.toLowerCase().endsWith(".jpeg")||
+      f.toLowerCase().endsWith(".webp")
     );
 
   res.json(files);
