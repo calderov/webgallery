@@ -60,6 +60,11 @@
     cursor: grabbing;
   }
 
+  #modal.hide-cursor,
+  #modal.hide-cursor * {
+  cursor: none !important;
+  }
+
   .controls {
     position: absolute;
     bottom: 30px;
@@ -111,6 +116,8 @@
 <script>
   const controls = document.querySelector(".controls");
   let controlsTimer = null;
+  let cursorTimer = null;
+
   let scale = 1;
   let originX = 0;
   let originY = 0;
@@ -143,16 +150,24 @@
     modalImg.src = `/public/${images[currentIndex]}`;
     resetTransform();
     modal.style.display = "flex";
+
+    modal.classList.remove("hide-cursor");
     showControls();
   }
 
   function showControls() {
     controls.classList.add("visible");
+    modal.classList.remove("hide-cursor");
 
     clearTimeout(controlsTimer);
+    clearTimeout(cursorTimer);
 
     controlsTimer = setTimeout(() => {
       controls.classList.remove("visible");
+    }, 2000);
+
+    cursorTimer = setTimeout(() => {
+      modal.classList.add("hide-cursor");
     }, 2000);
   }
 
