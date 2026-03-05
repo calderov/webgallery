@@ -165,14 +165,15 @@
     updateTransform();
   }
 
-  function showImage(index) {
+  function showImage(index, fromSlideshow = false) {
     currentIndex = index;
     modalImg.src = `/public/${images[currentIndex]}`;
     resetTransform();
     modal.style.display = "flex";
 
-    modal.classList.remove("hide-cursor");
-    showControls();
+    if (!fromSlideshow) {
+      showControls();
+    }
   }
 
   function showControls() {
@@ -283,13 +284,13 @@
     if (e.key === "ArrowRight") {
       // next image
       currentIndex = (currentIndex + 1) % images.length;
-      showImage(currentIndex);
+      showImage(currentIndex, true);
     }
 
     if (e.key === "ArrowLeft") {
       // previous image
       currentIndex = (currentIndex - 1 + images.length) % images.length;
-      showImage(currentIndex);
+      showImage(currentIndex, true);
     }
 
     if (e.key === "Escape") {
@@ -313,7 +314,7 @@
 
     slideshowInterval = setInterval(() => {
       currentIndex = (currentIndex + 1) % images.length;
-      showImage(currentIndex);
+      showImage(currentIndex, true);
     }, 3000); // 3 seconds
   }
 
