@@ -84,17 +84,37 @@
   }
 
   .controls button {
-    background: rgba(255,255,255,0.9);
-    border: none;
-    padding: 12px 16px;
-    font-size: 16px;
-    border-radius: 8px;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid white;
+    color: white;
+    font-size: 18px;
     cursor: pointer;
-    backdrop-filter: blur(4px);
+  }
+
+  .controls button:hover {
+    background: rgba(0,0,0,0.75);
   }
 
   .controls button:active {
     background: #ddd;
+  }
+
+  #zoom-in,
+  #zoom-out {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #zoom-reset,
+  #slideshow-btn {
+    border-radius: 8px;
+    padding: 10px 16px;
   }
 </style>
 </head>
@@ -106,10 +126,10 @@
 <div id="modal">
   <img id="modal-img" />
   <div class="controls">
-    <button id="zoom-in">🔍+</button>
-    <button id="zoom-out">🔍−</button>
-    <button id="zoom-reset">🔄 Reset</button>
-    <button id="slideshow-btn">▶ Slideshow</button>
+    <button id="zoom-in">+</button>
+    <button id="zoom-out">−</button>
+    <button id="zoom-reset">Reset</button>
+    <button id="slideshow-btn">Slideshow</button>
   </div>
 </div>
 
@@ -289,7 +309,7 @@
     if (isSlideshowRunning) return;
 
     isSlideshowRunning = true;
-    slideshowBtn.textContent = "⏸ Pause";
+    slideshowBtn.textContent = "Pause";
 
     slideshowInterval = setInterval(() => {
       currentIndex = (currentIndex + 1) % images.length;
@@ -299,7 +319,7 @@
 
   function stopSlideshow() {
     isSlideshowRunning = false;
-    slideshowBtn.textContent = "▶ Slideshow";
+    slideshowBtn.textContent = "Slideshow";
     clearInterval(slideshowInterval);
   }
 
