@@ -115,9 +115,39 @@ body {
   border-radius: 8px;
   padding: 10px 16px;
 }
+
+.topbar {
+  position: sticky;
+  top: 0;
+  background: white;
+  padding: 10px 16px;
+  border-bottom: 1px solid #ddd;
+  z-index: 10;
+}
+
+#search {
+  width: 100%;
+  max-width: 400px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
 </style>
 </head>
 <body>
+
+<header class="topbar">
+  <input
+    type="text"
+    id="search"
+    placeholder="Filter images..."
+    autocomplete="off"
+    autocorrect="off"
+    autocapitalize="off"
+    spellcheck="false"
+  />
+</header>
 
 <div class="gallery" id="gallery"></div>
 
@@ -202,7 +232,9 @@ fetch("/images")
     img.src = `/public/${file}`;
     img.loading = "lazy";
 
+    img.dataset.filename = file.toLowerCase();
     img.addEventListener("click", () => showImage(idx));
+
     container.appendChild(img);
   });
 });
@@ -346,6 +378,28 @@ modalImg.addEventListener("dblclick",(e)=>{
 modal.addEventListener("mousemove",showControls);
 controls.addEventListener("mousemove",showControls);
 
+const searchInput = document.getElementById("search");
+
+searchInput.addEventListener("input", () => {
+  const query = searchInput.value.toLowerCase().trim();
+  const imgs = document.querySelectorAll("#gallery img");
+
+  imgs.forEach(img => {
+    const name = img.dataset.filename;
+    if (name.includes(query)) {
+      img.style.display = "";
+    } else {
+      img.style.display = "none";
+    }
+  });
+});
+
+searchInput.addEventListener("keydown", e => {
+  if (e.key === "Escape") {
+    searchInput.value = "";
+    searchInput.dispatchEvent(new Event("input"));
+  }
+});
 </script>
 
 </body>
