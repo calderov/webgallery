@@ -6,124 +6,121 @@
 <title>Image Gallery</title>
 
 <style>
-  body {
-    margin: 0;
-    font-family: sans-serif;
-    background: #fafafa;
-  }
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: #fafafa;
+}
 
-  .gallery {
-    column-count: 4;
-    column-gap: 1rem;
-    padding: 1rem;
-  }
+.gallery {
+  column-count: 4;
+  column-gap: 1rem;
+  padding: 1rem;
+}
 
-  @media (max-width: 1200px) { .gallery { column-count: 3; } }
-  @media (max-width: 800px)  { .gallery { column-count: 2; } }
-  @media (max-width: 500px)  { .gallery { column-count: 1; } }
+@media (max-width: 1200px) { .gallery { column-count: 3; } }
+@media (max-width: 800px)  { .gallery { column-count: 2; } }
+@media (max-width: 500px)  { .gallery { column-count: 1; } }
 
-  .gallery img {
-    width: 100%;
-    display: block;
-    margin-bottom: .5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    break-inside: avoid;
-  }
+.gallery img {
+  width: 100%;
+  display: block;
+  margin-bottom: .5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  break-inside: avoid;
+}
 
-  /* Fullscreen modal */
-  #modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-    flex-direction: column;
-    overflow: hidden;
-  }
+#modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  flex-direction: column;
+  overflow: hidden;
+}
 
-  #modal-img {
-    max-width: 90%;
-    max-height: 90%;
-    border-radius: 8px;
-    transition: transform 0.15s ease-out;
-    touch-action: none;
-    cursor: grab;
+#modal-img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 8px;
+  transition: transform 0.15s ease-out;
+  touch-action: none;
+  cursor: grab;
 
-    /* Prevent ghost drag */
-    user-drag: none;
-    -webkit-user-drag: none;
-  }
+  user-drag: none;
+  -webkit-user-drag: none;
+}
 
-  #modal-img:active {
-    cursor: grabbing;
-  }
+#modal-img:active {
+  cursor: grabbing;
+}
 
-  #modal.hide-cursor,
-  #modal.hide-cursor * {
+#modal.hide-cursor,
+#modal.hide-cursor * {
   cursor: none !important;
-  }
+}
 
-  .controls {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
+.controls {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
 
-    display: flex;
-    gap: 10px;
+  display: flex;
+  gap: 10px;
 
-    opacity: 0;
-    transition: opacity 0.35s ease;
-    z-index: 1000;
-  }
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: 1000;
+}
 
-  .controls.visible {
-    opacity: 1;
-  }
+.controls.visible {
+  opacity: 1;
+}
 
-  .controls button {
-    background: rgba(0,0,0,0.5);
-    border: 1px solid white;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-  }
+.controls button {
+  background: rgba(0,0,0,0.5);
+  border: 1px solid white;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+}
 
-  .controls button:hover {
-    background: rgba(0,0,0,0.75);
-  }
+.controls button:hover {
+  background: rgba(0,0,0,0.75);
+}
 
-  .controls button:active {
-    background: #ddd;
-  }
+.controls button:active {
+  background: #ddd;
+}
 
-  #zoom-in,
-  #zoom-out {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    font-weight: bold;
-    font-size: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+#zoom-in,
+#zoom-out {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  #zoom-reset,
-  #slideshow-btn {
-    border-radius: 8px;
-    padding: 10px 16px;
-  }
+#zoom-reset,
+#slideshow-btn {
+  border-radius: 8px;
+  padding: 10px 16px;
+}
 </style>
 </head>
 <body>
 
 <div class="gallery" id="gallery"></div>
 
-<!-- Fullscreen modal -->
 <div id="modal">
   <img id="modal-img" />
   <div class="controls">
@@ -135,236 +132,220 @@
 </div>
 
 <script>
-  const controls = document.querySelector(".controls");
-  let controlsTimer = null;
-  let cursorTimer = null;
 
-  let scale = 1;
-  let originX = 0;
-  let originY = 0;
-  let startX = 0;
-  let startY = 0;
-  let isDragging = false;
+const controls = document.querySelector(".controls");
+let controlsTimer = null;
+let cursorTimer = null;
 
-  let images = [];          // all filenames
-  let currentIndex = 0;     // currently viewed image
+let scale = 1;
+let originX = 0;
+let originY = 0;
+let startX = 0;
+let startY = 0;
+let isDragging = false;
 
-  const modal = document.getElementById("modal");
-  const modalImg = document.getElementById("modal-img");
+let images = [];
+let currentIndex = 0;
 
-  /* Prevent default browser drag */
-  modalImg.addEventListener("dragstart", e => e.preventDefault());
+const modal = document.getElementById("modal");
+const modalImg = document.getElementById("modal-img");
 
-  function updateTransform() {
-    modalImg.style.transform =
-      `translate(${originX}px, ${originY}px) scale(${scale})`;
+/* Prevent default drag */
+modalImg.addEventListener("dragstart", e => e.preventDefault());
+
+function updateTransform() {
+  modalImg.style.transform =
+    `translate(${originX}px, ${originY}px) scale(${scale})`;
+}
+
+function resetTransform() {
+  scale = 1;
+  originX = 0;
+  originY = 0;
+  updateTransform();
+}
+
+function showImage(index, fromSlideshow = false) {
+  currentIndex = index;
+  modalImg.src = `/public/${images[currentIndex]}`;
+  resetTransform();
+  modal.style.display = "flex";
+
+  if (!fromSlideshow) showControls();
+}
+
+function showControls() {
+  controls.classList.add("visible");
+  modal.classList.remove("hide-cursor");
+
+  clearTimeout(controlsTimer);
+  clearTimeout(cursorTimer);
+
+  controlsTimer = setTimeout(() => {
+    controls.classList.remove("visible");
+  }, 2000);
+
+  cursorTimer = setTimeout(() => {
+    modal.classList.add("hide-cursor");
+  }, 2000);
+}
+
+/* Load images */
+fetch("/images")
+.then(res => res.json())
+.then(files => {
+  images = files;
+  const container = document.getElementById("gallery");
+
+  files.forEach((file, idx) => {
+    const img = document.createElement("img");
+    img.src = `/public/${file}`;
+    img.loading = "lazy";
+
+    img.addEventListener("click", () => showImage(idx));
+    container.appendChild(img);
+  });
+});
+
+/* Close modal */
+modal.addEventListener("click", e => {
+  if (e.target.id === "modal") modal.style.display = "none";
+});
+
+/* Zoom buttons */
+document.getElementById("zoom-in").onclick = () => {
+  scale = Math.min(4, scale + 0.2);
+  updateTransform();
+};
+
+document.getElementById("zoom-out").onclick = () => {
+  scale = Math.max(0.2, scale - 0.2);
+  updateTransform();
+};
+
+document.getElementById("zoom-reset").onclick = resetTransform;
+
+/* Wheel zoom centered at cursor */
+modalImg.addEventListener("wheel", e => {
+  e.preventDefault();
+
+  const rect = modalImg.getBoundingClientRect();
+
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
+
+  const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+
+  const newScale = Math.max(0.2, Math.min(4, scale * zoomFactor));
+
+  originX -= (mouseX - rect.width / 2) * (newScale/scale - 1);
+  originY -= (mouseY - rect.height / 2) * (newScale/scale - 1);
+
+  scale = newScale;
+
+  updateTransform();
+}, { passive:false });
+
+/* Mouse drag */
+modalImg.addEventListener("mousedown", e => {
+  if (scale <= 1) return;
+  isDragging = true;
+  startX = e.clientX - originX;
+  startY = e.clientY - originY;
+});
+
+window.addEventListener("mousemove", e => {
+  if (!isDragging) return;
+  originX = e.clientX - startX;
+  originY = e.clientY - startY;
+  updateTransform();
+});
+
+window.addEventListener("mouseup", () => isDragging = false);
+
+/* Keyboard navigation */
+window.addEventListener("keydown", e => {
+  if (modal.style.display !== "flex") return;
+
+  if (e.key === "ArrowRight") {
+    currentIndex = (currentIndex + 1) % images.length;
+    showImage(currentIndex,true);
   }
 
-  function resetTransform() {
-    scale = 1;
-    originX = originY = 0;
+  if (e.key === "ArrowLeft") {
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    showImage(currentIndex,true);
+  }
+
+  if (e.key === "Escape") {
+    modal.style.display = "none";
+  }
+});
+
+/* Slideshow */
+let slideshowInterval = null;
+let isSlideshowRunning = false;
+
+const slideshowBtn = document.getElementById("slideshow-btn");
+
+function startSlideshow(){
+  if(isSlideshowRunning) return;
+
+  isSlideshowRunning = true;
+  slideshowBtn.textContent="Pause";
+  slideshowInterval = setInterval(()=>{
+    currentIndex = (currentIndex + 1) % images.length;
+    showImage(currentIndex,true);
+  },3000);
+}
+
+function stopSlideshow(){
+  isSlideshowRunning=false;
+  slideshowBtn.textContent="Slideshow";
+  clearInterval(slideshowInterval);
+}
+
+slideshowBtn.addEventListener("click",()=>{
+  if(isSlideshowRunning) stopSlideshow();
+  else startSlideshow();
+});
+
+/* Stop slideshow on manual actions */
+modal.addEventListener("click",e=>{
+  if(e.target.id==="modal") stopSlideshow();
+});
+
+window.addEventListener("keydown",stopSlideshow);
+modalImg.addEventListener("wheel",stopSlideshow);
+modalImg.addEventListener("mousedown",stopSlideshow);
+
+/* Double click zoom */
+modalImg.addEventListener("dblclick",(e)=>{
+
+  const rect = modalImg.getBoundingClientRect();
+
+  const offsetX = e.clientX - rect.left;
+  const offsetY = e.clientY - rect.top;
+
+  if(scale < 4){
+    const newScale = Math.min(4, scale * 2);
+
+    originX -= (offsetX - rect.width/2) * (newScale/scale - 1);
+    originY -= (offsetY - rect.height/2) * (newScale/scale - 1);
+
+    scale = newScale;
+
     updateTransform();
-  }
+  } else {
 
-  function showImage(index, fromSlideshow = false) {
-    currentIndex = index;
-    modalImg.src = `/public/${images[currentIndex]}`;
     resetTransform();
-    modal.style.display = "flex";
-
-    if (!fromSlideshow) {
-      showControls();
-    }
   }
+});
 
-  function showControls() {
-    controls.classList.add("visible");
-    modal.classList.remove("hide-cursor");
+/* Controls visibility */
+modal.addEventListener("mousemove",showControls);
+controls.addEventListener("mousemove",showControls);
 
-    clearTimeout(controlsTimer);
-    clearTimeout(cursorTimer);
-
-    controlsTimer = setTimeout(() => {
-      controls.classList.remove("visible");
-    }, 2000);
-
-    cursorTimer = setTimeout(() => {
-      modal.classList.add("hide-cursor");
-    }, 2000);
-  }
-
-  /* Load images */
-  fetch("/images")
-    .then(res => res.json())
-    .then(files => {
-      images = files; // store all image filenames
-      const container = document.getElementById("gallery");
-
-      files.forEach((file, idx) => {
-        const img = document.createElement("img");
-        img.src = `/public/${file}`;
-        img.loading = "lazy";
-
-        img.addEventListener("click", () => showImage(idx));
-        container.appendChild(img);
-      });
-    });
-
-  /* Close modal on background click */
-  modal.addEventListener("click", e => {
-    if (e.target.id === "modal") modal.style.display = "none";
-  });
-
-  /* Zoom controls */
-  document.getElementById("zoom-in").onclick = () => {
-    scale += 0.2;
-    updateTransform();
-  };
-
-  document.getElementById("zoom-out").onclick = () => {
-    scale = Math.max(0.2, scale - 0.2);
-    updateTransform();
-  };
-
-  document.getElementById("zoom-reset").onclick = () => resetTransform();
-
-  /* Wheel zoom */
-  modalImg.addEventListener("wheel", e => {
-    e.preventDefault();
-    scale += e.deltaY < 0 ? 0.1 : -0.1;
-    scale = Math.max(0.2, scale);
-    updateTransform();
-  }, { passive: false });
-
-  /* Mouse drag */
-  modalImg.addEventListener("mousedown", e => {
-    if (scale <= 1) return;
-    isDragging = true;
-    startX = e.clientX - originX;
-    startY = e.clientY - originY;
-  });
-
-  window.addEventListener("mousemove", e => {
-    if (!isDragging) return;
-    originX = e.clientX - startX;
-    originY = e.clientY - startY;
-    updateTransform();
-  });
-
-  window.addEventListener("mouseup", () => isDragging = false);
-
-  /* Touch drag */
-  modalImg.addEventListener("touchstart", e => {
-    if (scale <= 1) return;
-    isDragging = true;
-
-    const t = e.touches[0];
-    startX = t.clientX - originX;
-    startY = t.clientY - originY;
-  }, { passive: false });
-
-  modalImg.addEventListener("touchmove", e => {
-    if (!isDragging) return;
-    e.preventDefault();
-
-    const t = e.touches[0];
-    originX = t.clientX - startX;
-    originY = t.clientY - startY;
-
-    updateTransform();
-  }, { passive: false });
-
-  modalImg.addEventListener("touchend", () => {
-    isDragging = false;
-  });
-
-  /* ⌨️ Keyboard navigation */
-  window.addEventListener("keydown", e => {
-    if (modal.style.display !== "flex") return;
-
-    if (e.key === "ArrowRight") {
-      // next image
-      currentIndex = (currentIndex + 1) % images.length;
-      showImage(currentIndex, true);
-    }
-
-    if (e.key === "ArrowLeft") {
-      // previous image
-      currentIndex = (currentIndex - 1 + images.length) % images.length;
-      showImage(currentIndex, true);
-    }
-
-    if (e.key === "Escape") {
-      modal.style.display = "none";
-    }
-  });
-
-  /* --------------------------------------
-   Slideshow 
-  ---------------------------------------*/
-  let slideshowInterval = null;
-  let isSlideshowRunning = false;
-
-  const slideshowBtn = document.getElementById("slideshow-btn");
-
-  function startSlideshow() {
-    if (isSlideshowRunning) return;
-
-    isSlideshowRunning = true;
-    slideshowBtn.textContent = "Pause";
-
-    slideshowInterval = setInterval(() => {
-      currentIndex = (currentIndex + 1) % images.length;
-      showImage(currentIndex, true);
-    }, 3000); // 3 seconds
-  }
-
-  function stopSlideshow() {
-    isSlideshowRunning = false;
-    slideshowBtn.textContent = "Slideshow";
-    clearInterval(slideshowInterval);
-  }
-
-  slideshowBtn.addEventListener("click", () => {
-    if (isSlideshowRunning) stopSlideshow();
-    else startSlideshow();
-  });
-
-  /* Stop slideshow on manual actions */
-  modal.addEventListener("click", e => {
-    if (e.target.id === "modal") stopSlideshow();
-  });
-
-  window.addEventListener("keydown", () => stopSlideshow());
-
-  modalImg.addEventListener("wheel", () => stopSlideshow());
-  modalImg.addEventListener("mousedown", () => stopSlideshow());
-  modalImg.addEventListener("dblclick", () => stopSlideshow());
-
-  // ----- Double-click to zoom at cursor -----
-  modalImg.addEventListener("dblclick", (e) => {
-    const rect = modalImg.getBoundingClientRect();
-
-    if (scale === 1) {
-    // Zoom in at cursor
-    const offsetX = e.clientX - rect.left;
-    const offsetY = e.clientY - rect.top;
-
-    scale = 2;
-
-    // Adjust pan so clicked point stays centered
-    panX = -(offsetX - rect.width / 2);
-    panY = -(offsetY - rect.height / 2);
-
-    updateTransform();
-    } else {
-      // Double-click again resets
-      resetZoom();
-    }
-  });
-
-  modal.addEventListener("mousemove", showControls);
-  controls.addEventListener("mousemove", showControls);
 </script>
 
 </body>
