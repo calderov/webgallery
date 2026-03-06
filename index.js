@@ -6,8 +6,6 @@ const path = require("path");
 const app = express();
 const PORT = 3000;
 
-// const PUBLIC_DIR = path.join(__dirname, "../roop-floyd/output/public");
-// const PUBLIC_DIR = path.join(__dirname, "public");
 const PUBLIC_DIR = path.join(__dirname, "public");
 
 app.use("/public", express.static(PUBLIC_DIR));
