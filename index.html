@@ -116,38 +116,64 @@ body {
   padding: 10px 16px;
 }
 
-.topbar {
+.header {
   position: sticky;
   top: 0;
-  background: white;
-  padding: 10px 16px;
-  border-bottom: 1px solid #ddd;
+  background: #fafafa;
+  padding: 10px;
   z-index: 10;
+  border-bottom: 1px solid #ddd;
+}
+
+.search-container {
+  position: relative;
+  max-width: 400px;
+  margin: auto;
 }
 
 #search {
   width: 100%;
-  max-width: 400px;
-  padding: 8px 12px;
-  font-size: 14px;
+  padding: 8px 32px 8px 10px;
+  font-size: 16px;
   border-radius: 6px;
   border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+#clear-search {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  cursor: pointer;
+  display: none;
+  color: #666;
+}
+
+#clear-search:hover {
+  color: black;
 }
 </style>
 </head>
 <body>
 
-<header class="topbar">
-  <input
-    type="text"
-    id="search"
-    placeholder="Filter images..."
-    autocomplete="off"
-    autocorrect="off"
-    autocapitalize="off"
-    spellcheck="false"
-  />
-</header>
+<div class="header">
+  <div class="search-container">
+    <input
+      type="text"
+      id="search"
+      placeholder="Filter images..."
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="off"
+      spellcheck="false"
+    />
+    <button id="clear-search">✕</button>
+  </div>
+</div>
 
 <div class="gallery" id="gallery"></div>
 
@@ -379,6 +405,7 @@ modal.addEventListener("mousemove",showControls);
 controls.addEventListener("mousemove",showControls);
 
 const searchInput = document.getElementById("search");
+const clearBtn = document.getElementById("clear-search");
 
 searchInput.addEventListener("input", () => {
   const query = searchInput.value.toLowerCase().trim();
@@ -392,6 +419,8 @@ searchInput.addEventListener("input", () => {
       img.style.display = "none";
     }
   });
+
+  clearBtn.style.display = searchInput.value ? "block" : "none";
 });
 
 searchInput.addEventListener("keydown", e => {
@@ -399,6 +428,14 @@ searchInput.addEventListener("keydown", e => {
     searchInput.value = "";
     searchInput.dispatchEvent(new Event("input"));
   }
+});
+
+clearBtn.addEventListener("click", () => {
+  searchInput.value = "";
+  clearBtn.style.display = "none";
+
+  // trigger filter refresh
+  searchInput.dispatchEvent(new Event("input"));
 });
 </script>
 
